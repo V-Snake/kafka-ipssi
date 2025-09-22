@@ -2,18 +2,19 @@
 # -*- coding: utf-8 -*-
 """
 Ex03 — Producer météo "live" (Open-Meteo, pas de clé API)
-- Géocode une ville -> (lat, lon)
+- Accepte city sous forme: "Paris", "Paris,FR", ou "48.8566,2.3522"
+- Géocode via Open-Meteo Geocoding (fallbacks robustes)
 - Récupère current_weather
 - Envoie N messages JSON dans Kafka (topic par défaut: weather_stream)
 
 Exemples:
-  python producer_weather.py --city "Paris,FR" --loops 5 --interval 2
-  python producer_weather.py --city "London,UK" --topic weather_stream
+  python producer_weather.py --city "Paris,FR" --loops 5 --interval 1
+  python producer_weather.py --city "48.8566,2.3522" --loops 3
 """
 
-import os, time, json, argparse, logging
+import os, time, json, argparse, logging, re
 from datetime import datetime, timezone
-from typing import Optional, Tuple, Dict, Any
+from typing import Optional, Tuple, Dict, Any, List
 
 import requests
 from kafka import KafkaProducer
@@ -22,16 +23,64 @@ from kafka.errors import NoBrokersAvailable
 GEO_URL = "https://geocoding-api.open-meteo.com/v1/search"
 WX_URL  = "https://api.open-meteo.com/v1/forecast"
 
-def geocode_city(session: requests.Session, city: str) -> Tuple[float, float, str]:
-    """Retourne (lat, lon, name_display). Lève ValueError si introuvable."""
-    r = session.get(GEO_URL, params={"name": city, "count": 1, "language": "en", "format": "json"}, timeout=10)
+_COORDS_RE = re.compile(r"^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$")
+
+def parse_coords(s: str) -> Optional[Tuple[float, float]]:
+    m = _COORDS_RE.match(s)
+    if not m:
+        return None
+    return float(m.group(1)), float(m.group(2))
+
+def om_geocode(session: requests.Session, name: str, count: int = 5) -> List[Dict[str, Any]]:
+    r = session.get(GEO_URL, params={"name": name, "count": count, "language": "en", "format": "json"}, timeout=10)
     r.raise_for_status()
     data = r.json()
-    results = data.get("results") or []
-    if not results:
-        raise ValueError(f"Ville introuvable: {city}")
-    res = results[0]
-    return float(res["latitude"]), float(res["longitude"]), f'{res.get("name")}, {res.get("country_code")}'
+    return data.get("results") or []
+
+def geocode_city(session: requests.Session, city: str) -> Tuple[float, float, str]:
+    """
+    Tente successivement:
+    - Si city = "lat,lon" -> retour direct
+    - Requête Open-Meteo avec city tel quel
+    - Si "Ville,CC" -> retry avec "Ville" et préférer result.country_code == CC
+    - En dernier recours: enlever tout après la première virgule
+    """
+    # 1) Coordonnées directes
+    coords = parse_coords(city)
+    if coords:
+        lat, lon = coords
+        return lat, lon, f"coords({lat:.4f},{lon:.4f})"
+
+    # 2) Tentative directe
+    results = om_geocode(session, city, count=5)
+    if results:
+        r = results[0]
+        return float(r["latitude"]), float(r["longitude"]), f'{r.get("name")}, {r.get("country_code")}'
+
+    # 3) Si "Ville,CC" -> préférer le pays
+    parts = [p.strip() for p in city.split(",") if p.strip()]
+    if len(parts) >= 2:
+        base, cc = parts[0], parts[-1].upper()
+        results = om_geocode(session, base, count=5)
+        if results:
+            # Cherche le code pays exact si cc semble être un code sur 2 lettres
+            if len(cc) in (2, 3):
+                for r in results:
+                    if (r.get("country_code") or "").upper() == cc:
+                        return float(r["latitude"]), float(r["longitude"]), f'{r.get("name")}, {r.get("country_code")}'
+            # sinon, prends le premier
+            r = results[0]
+            return float(r["latitude"]), float(r["longitude"]), f'{r.get("name")}, {r.get("country_code")}'
+
+    # 4) Dernier essai: garder avant la première virgule
+    if "," in city:
+        base = city.split(",")[0].strip()
+        results = om_geocode(session, base, count=5)
+        if results:
+            r = results[0]
+            return float(r["latitude"]), float(r["longitude"]), f'{r.get("name")}, {r.get("country_code")}'
+
+    raise ValueError(f"Ville introuvable: {city}")
 
 def fetch_current_weather(session: requests.Session, lat: float, lon: float) -> Dict[str, Any]:
     r = session.get(WX_URL, params={"latitude": lat, "longitude": lon, "current_weather": "true"}, timeout=10)
@@ -66,7 +115,7 @@ def main():
     parser.add_argument("--city", default=os.getenv("CITY", "Paris,FR"))
     parser.add_argument("--topic", default=os.getenv("TOPIC", "weather_stream"))
     parser.add_argument("--loops", type=int, default=int(os.getenv("LOOPS", "5")))
-    parser.add_argument("--interval", type=float, default=float(os.getenv("INTERVAL", "2")))
+    parser.add_argument("--interval", type=float, default=float(os.getenv("INTERVAL", "1")))
     args = parser.parse_args()
 
     servers = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
@@ -76,7 +125,7 @@ def main():
     session = requests.Session()
     try:
         lat, lon, display = geocode_city(session, args.city)
-        logging.info("Géocodage: %s -> lat=%.4f lon=%.4f", display, lat, lon)
+        logging.info("Géocodage OK: %s -> lat=%.4f lon=%.4f", display, lat, lon)
     except Exception as e:
         logging.error("Échec géocodage (%s): %s", args.city, e)
         raise SystemExit(1)
@@ -102,7 +151,7 @@ def main():
             sent += 1
             logging.info("Envoyé %d/%d: %s°C, wind %.1f", sent, args.loops, wx.get("temperature"), wx.get("windspeed"))
         except Exception as e:
-            logging.warning("Erreur fetch/envoi (iteration %d): %s", i + 1, e)
+            logging.warning("Erreur fetch/envoi (it=%d): %s", i + 1, e)
         time.sleep(args.interval)
 
     producer.flush(); producer.close()
