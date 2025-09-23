@@ -62,7 +62,7 @@ def main():
            .withWatermark("event_ts", "10 minutes")
     )
 
-    # 3) Fenêtrage + agrégats
+    # 3) Fenêtrage + agrégats (inclut les compteurs d'alertes)
     grouped = (
         events.groupBy(
             "city",
@@ -75,6 +75,12 @@ def main():
             F.avg("windspeed_ms").alias("avg_windspeed_ms"),
             F.max("windspeed_ms").alias("max_windspeed_ms"),
             F.count(F.lit(1)).alias("records"),
+
+            # Compteurs d'alertes demandés
+            F.sum(F.when(F.col("wind_alert_level") == "level_1", 1).otherwise(0)).alias("wind_l1"),
+            F.sum(F.when(F.col("wind_alert_level") == "level_2", 1).otherwise(0)).alias("wind_l2"),
+            F.sum(F.when(F.col("heat_alert_level") == "level_1", 1).otherwise(0)).alias("heat_l1"),
+            F.sum(F.when(F.col("heat_alert_level") == "level_2", 1).otherwise(0)).alias("heat_l2"),
         )
     )
 
@@ -90,6 +96,12 @@ def main():
             F.round(F.col("avg_windspeed_ms"), 2).alias("avg_windspeed_ms"),
             F.round(F.col("max_windspeed_ms"), 2).alias("max_windspeed_ms"),
             F.col("records").cast("long").alias("records"),
+
+            # Exposition des compteurs
+            F.col("wind_l1").cast("long").alias("wind_level_1"),
+            F.col("wind_l2").cast("long").alias("wind_level_2"),
+            F.col("heat_l1").cast("long").alias("heat_level_1"),
+            F.col("heat_l2").cast("long").alias("heat_level_2"),
         )
     )
 
