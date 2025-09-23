@@ -10,6 +10,7 @@ Ex06 — Producer météo "live" (ville + pays en arguments)
 - Récupère current_weather
 - Envoie des messages JSON dans Kafka (topic par défaut: weather_stream)
 - Chaque message inclut: city_name, country_code, country (+ meta admin1/admin2)
+- La *clé Kafka* = "{country_code}:{admin1}" pour le partitionnement par région
 
 Exemples:
   python producer_weather.py --city-name "Paris" --country "FR" --loops 5 --interval 1
@@ -51,11 +52,6 @@ def geocode_city(
     Renvoie (lat, lon, meta) avec meta = {
         name, country, country_code, admin1, admin2, display
     }
-
-    Stratégie:
-      - si query = "lat,lon" -> retourne direct
-      - sinon geocode; si prefer_country fourni (ex "FR"), sélectionne le meilleur match avec ce code
-      - sinon prend le premier résultat
     """
     coords = parse_coords(query)
     if coords:
@@ -72,7 +68,6 @@ def geocode_city(
 
     results = om_geocode(session, query, count=8)
     if not results:
-        # Si "Ville,CC" -> retry sur "Ville" avec préférence CC
         parts = [p.strip() for p in (query or "").split(",") if p.strip()]
         if len(parts) >= 2:
             base, cc = parts[0], parts[-1]
@@ -111,6 +106,7 @@ def build_producer(servers: str) -> KafkaProducer:
         linger_ms=10,
         retries=3,
         value_serializer=lambda v: json.dumps(v, separators=(",", ":")).encode("utf-8"),
+        key_serializer=lambda k: k.encode("utf-8") if isinstance(k, str) else k,
     )
 
 def fetch_current_weather(session: requests.Session, lat: float, lon: float) -> Dict[str, Any]:
@@ -134,10 +130,8 @@ def fetch_current_weather(session: requests.Session, lat: float, lon: float) -> 
 
 def main():
     parser = argparse.ArgumentParser()
-    # Nouveaux arguments séparés
     parser.add_argument("--city-name", help='Nom de la ville (ex: "Paris")')
     parser.add_argument("--country", help='Code pays (ex: "FR")')
-    # Compat: ancien --city "Paris,FR" ou "lat,lon"
     parser.add_argument("--city", help='Compat: "Paris,FR" ou "48.8566,2.3522"')
     parser.add_argument("--topic", default=os.getenv("TOPIC", "weather_stream"))
     parser.add_argument("--loops", type=int, default=int(os.getenv("LOOPS", "5")))
@@ -147,17 +141,15 @@ def main():
     servers = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
-    # Construire la requête de géocodage à partir des nouveaux args
+    # Construire la requête de géocodage
     if args.city_name:
         query = args.city_name if not args.country else f"{args.city_name},{args.country}"
         prefer_country = args.country
     elif args.city:
         query = args.city
-        # Si --city a la forme "Ville,CC", on peut déduire une préférence
         parts = [p.strip() for p in args.city.split(",") if p.strip()]
         prefer_country = parts[-1] if len(parts) >= 2 and len(parts[-1]) in (2, 3) else None
     else:
-        # Valeur par défaut identique à avant
         query = os.getenv("CITY", "Paris,FR")
         prefer_country = None
 
@@ -196,14 +188,18 @@ def main():
                 "lat": lat,
                 "lon": lon,
 
-                # Mesure
+                # Mesure brute Open-Meteo
                 "current": wx,
 
                 # Métadonnées
                 "ts_sent": datetime.now(timezone.utc).isoformat(),
                 "version": 2
             }
-            producer.send(args.topic, payload).get(timeout=10)
+
+            # Clé Kafka par région -> ex: "FR:Île-de-France"
+            key_str = f'{payload.get("country_code") or "XX"}:{payload.get("admin1") or payload.get("city_name") or "NA"}'
+
+            producer.send(args.topic, key=key_str, value=payload).get(timeout=10)
             sent += 1
             logging.info("Envoyé %d/%d: %s°C, wind %.1f (%s, %s)",
                          sent, args.loops, wx.get("temperature"), wx.get("windspeed"),

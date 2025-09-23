@@ -20,11 +20,15 @@ def main():
     args = parse_args()
     slide = args.slide or args.window
 
-    # SparkSession avec désactivation des libs natives Hadoop (évite l'erreur access0 sous Windows)
+    # SparkSession
     spark = (
         SparkSession.builder
         .appName("weather_aggregates")
         .config("spark.hadoop.io.native.lib.available", "false")
+        # Rendre le parsing tolérant par défaut (évite les exceptions sur dates invalides)
+        .config("spark.sql.ansi.enabled", "false")
+        # Optionnel: fixe explicitement le fuseau si tu veux un rendu stable
+        # .config("spark.sql.session.timeZone", "Europe/Paris")
         .getOrCreate()
     )
     spark.sparkContext.setLogLevel("WARN")
@@ -42,29 +46,41 @@ def main():
     # 2) Schéma JSON des messages de weather_transformed
     schema = T.StructType([
         T.StructField("city", T.StringType()),
+        T.StructField("city_name", T.StringType()),
+        T.StructField("country_code", T.StringType()),
+        T.StructField("admin1", T.StringType()),
         T.StructField("lat", T.DoubleType()),
         T.StructField("lon", T.DoubleType()),
         T.StructField("event_time", T.StringType()),
         T.StructField("temperature", T.DoubleType()),
         T.StructField("windspeed_ms", T.DoubleType()),
+        T.StructField("winddirection", T.DoubleType()),
+        T.StructField("weathercode", T.IntegerType()),
         T.StructField("wind_alert_level", T.StringType()),
         T.StructField("heat_alert_level", T.StringType()),
-        T.StructField("weathercode", T.IntegerType()),
         T.StructField("ts_sent", T.StringType()),
+        T.StructField("severity", T.StringType()),
     ])
 
     events = (
         raw.select(F.col("value").cast("string").alias("json"))
            .select(F.from_json("json", schema).alias("d"))
            .select("d.*")
-           # event_time ex: 2025-09-22T13:15:00.000+02:00
-           .withColumn("event_ts", F.to_timestamp("event_time", "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"))
-           .withWatermark("event_ts", "10 minutes")
+    )
+
+    # 2b) Parsing robuste d'un ISO 8601 sans pattern explicite (évite le piège du 'T')
+    events = (
+        events
+        .withColumn("event_ts", F.to_timestamp("event_time"))  # Laisse Spark parser l'ISO
+        .where(F.col("event_ts").isNotNull())                  # écarte les lignes non parsées
+        .withWatermark("event_ts", "10 minutes")
     )
 
     # 3) Fenêtrage + agrégats (inclut les compteurs d'alertes)
     grouped = (
         events.groupBy(
+            "country_code",
+            "admin1",
             "city",
             F.window(F.col("event_ts"), args.window, slide)
         )
@@ -75,8 +91,6 @@ def main():
             F.avg("windspeed_ms").alias("avg_windspeed_ms"),
             F.max("windspeed_ms").alias("max_windspeed_ms"),
             F.count(F.lit(1)).alias("records"),
-
-            # Compteurs d'alertes demandés
             F.sum(F.when(F.col("wind_alert_level") == "level_1", 1).otherwise(0)).alias("wind_l1"),
             F.sum(F.when(F.col("wind_alert_level") == "level_2", 1).otherwise(0)).alias("wind_l2"),
             F.sum(F.when(F.col("heat_alert_level") == "level_1", 1).otherwise(0)).alias("heat_l1"),
@@ -85,19 +99,20 @@ def main():
     )
 
     # 4) Mise en forme JSON pour Kafka
+    # NB: on sort "window_start/end" au format 'yyyy-MM-dd HH:mm:ss' (sans 'T' pour éviter tout souci de pattern)
     out_df = (
         grouped.select(
+            F.col("country_code"),
+            F.col("admin1"),
             F.col("city"),
-            F.date_format(F.col("window.start"), "yyyy-MM-dd'T'HH:mm:ssXXX").alias("window_start"),
-            F.date_format(F.col("window.end"), "yyyy-MM-dd'T'HH:mm:ssXXX").alias("window_end"),
+            F.date_format(F.col("window.start"), "yyyy-MM-dd HH:mm:ss").alias("window_start"),
+            F.date_format(F.col("window.end"),   "yyyy-MM-dd HH:mm:ss").alias("window_end"),
             F.round(F.col("avg_temp"), 2).alias("avg_temperature"),
             F.round(F.col("min_temp"), 2).alias("min_temperature"),
             F.round(F.col("max_temp"), 2).alias("max_temperature"),
             F.round(F.col("avg_windspeed_ms"), 2).alias("avg_windspeed_ms"),
             F.round(F.col("max_windspeed_ms"), 2).alias("max_windspeed_ms"),
             F.col("records").cast("long").alias("records"),
-
-            # Exposition des compteurs
             F.col("wind_l1").cast("long").alias("wind_level_1"),
             F.col("wind_l2").cast("long").alias("wind_level_2"),
             F.col("heat_l1").cast("long").alias("heat_level_1"),
@@ -124,7 +139,7 @@ def main():
 
     # (Optionnel) Affichage console pour debug (update est ok pour console)
     if args.console:
-        console_q = (
+        (
             out_df.writeStream
             .format("console")
             .option("truncate", False)
