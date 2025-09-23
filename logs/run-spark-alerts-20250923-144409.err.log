@@ -1,0 +1,190 @@
+Picked up JAVA_TOOL_OPTIONS: -Djava.net.preferIPv4Stack=true
+Picked up JAVA_TOOL_OPTIONS: -Djava.net.preferIPv4Stack=true
+WARNING: Using incubator modules: jdk.incubator.vector
+:: loading settings :: url = jar:file:/C:/spark/spark-4.0.0-bin-hadoop3/jars/ivy-2.5.3.jar!/org/apache/ivy/core/settings/ivysettings.xml
+Ivy Default Cache set to: C:\Users\Nassim\.ivy2.5.2\cache
+The jars for the packages stored in: C:\Users\Nassim\.ivy2.5.2\jars
+org.apache.spark#spark-sql-kafka-0-10_2.13 added as a dependency
+:: resolving dependencies :: org.apache.spark#spark-submit-parent-081df17e-5e0d-48fc-b033-b330030992a3;1.0
+	confs: [default]
+	found org.apache.spark#spark-sql-kafka-0-10_2.13;4.0.1 in central
+	found org.apache.spark#spark-token-provider-kafka-0-10_2.13;4.0.1 in central
+	found org.apache.kafka#kafka-clients;3.9.1 in central
+	found org.lz4#lz4-java;1.8.0 in central
+	found org.xerial.snappy#snappy-java;1.1.10.7 in central
+	found org.slf4j#slf4j-api;2.0.16 in central
+	found org.apache.hadoop#hadoop-client-runtime;3.4.1 in central
+	found org.apache.hadoop#hadoop-client-api;3.4.1 in central
+	found com.google.code.findbugs#jsr305;3.0.0 in central
+	found org.scala-lang.modules#scala-parallel-collections_2.13;1.2.0 in central
+	found org.apache.commons#commons-pool2;2.12.0 in central
+:: resolution report :: resolve 954ms :: artifacts dl 44ms
+	:: modules in use:
+	com.google.code.findbugs#jsr305;3.0.0 from central in [default]
+	org.apache.commons#commons-pool2;2.12.0 from central in [default]
+	org.apache.hadoop#hadoop-client-api;3.4.1 from central in [default]
+	org.apache.hadoop#hadoop-client-runtime;3.4.1 from central in [default]
+	org.apache.kafka#kafka-clients;3.9.1 from central in [default]
+	org.apache.spark#spark-sql-kafka-0-10_2.13;4.0.1 from central in [default]
+	org.apache.spark#spark-token-provider-kafka-0-10_2.13;4.0.1 from central in [default]
+	org.lz4#lz4-java;1.8.0 from central in [default]
+	org.scala-lang.modules#scala-parallel-collections_2.13;1.2.0 from central in [default]
+	org.slf4j#slf4j-api;2.0.16 from central in [default]
+	org.xerial.snappy#snappy-java;1.1.10.7 from central in [default]
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   11  |   0   |   0   |   0   ||   11  |   0   |
+	---------------------------------------------------------------------
+:: retrieving :: org.apache.spark#spark-submit-parent-081df17e-5e0d-48fc-b033-b330030992a3
+	confs: [default]
+	0 artifacts copied, 11 already retrieved (0kB/26ms)
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+25/09/23 14:44:18 INFO SparkContext: Running Spark version 4.0.0
+25/09/23 14:44:18 INFO SparkContext: OS info Windows 11, 10.0, amd64
+25/09/23 14:44:18 INFO SparkContext: Java version 17.0.16
+25/09/23 14:44:18 INFO ResourceUtils: ==============================================================
+25/09/23 14:44:18 INFO ResourceUtils: No custom resources configured for spark.driver.
+25/09/23 14:44:18 INFO ResourceUtils: ==============================================================
+25/09/23 14:44:18 INFO SparkContext: Submitted application: ex04-spark-transform-alerts
+25/09/23 14:44:18 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+25/09/23 14:44:18 INFO ResourceProfile: Limiting resource is cpu
+25/09/23 14:44:18 INFO ResourceProfileManager: Added ResourceProfile id: 0
+25/09/23 14:44:18 INFO SecurityManager: Changing view acls to: Nassim
+25/09/23 14:44:18 INFO SecurityManager: Changing modify acls to: Nassim
+25/09/23 14:44:18 INFO SecurityManager: Changing view acls groups to: Nassim
+25/09/23 14:44:18 INFO SecurityManager: Changing modify acls groups to: Nassim
+25/09/23 14:44:18 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: Nassim groups with view permissions: EMPTY; users with modify permissions: Nassim; groups with modify permissions: EMPTY; RPC SSL disabled
+25/09/23 14:44:19 INFO Utils: Successfully started service 'sparkDriver' on port 62968.
+25/09/23 14:44:19 INFO SparkEnv: Registering MapOutputTracker
+25/09/23 14:44:19 INFO SparkEnv: Registering BlockManagerMaster
+25/09/23 14:44:19 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+25/09/23 14:44:19 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+25/09/23 14:44:19 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+25/09/23 14:44:19 INFO DiskBlockManager: Created local directory at C:\Users\Nassim\AppData\Local\Temp\blockmgr-f89c5b08-2def-4966-a693-e41cf3fe863a
+25/09/23 14:44:19 INFO SparkEnv: Registering OutputCommitCoordinator
+25/09/23 14:44:20 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+25/09/23 14:44:20 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+25/09/23 14:44:20 INFO SparkContext: Added JAR file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.spark_spark-sql-kafka-0-10_2.13-4.0.1.jar at spark://127.0.0.1:62968/jars/org.apache.spark_spark-sql-kafka-0-10_2.13-4.0.1.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO SparkContext: Added JAR file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.13-4.0.1.jar at spark://127.0.0.1:62968/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.13-4.0.1.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO SparkContext: Added JAR file:///C:/Users/Nassim/.ivy2.5.2/jars/org.scala-lang.modules_scala-parallel-collections_2.13-1.2.0.jar at spark://127.0.0.1:62968/jars/org.scala-lang.modules_scala-parallel-collections_2.13-1.2.0.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO SparkContext: Added JAR file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.kafka_kafka-clients-3.9.1.jar at spark://127.0.0.1:62968/jars/org.apache.kafka_kafka-clients-3.9.1.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO SparkContext: Added JAR file:///C:/Users/Nassim/.ivy2.5.2/jars/com.google.code.findbugs_jsr305-3.0.0.jar at spark://127.0.0.1:62968/jars/com.google.code.findbugs_jsr305-3.0.0.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO SparkContext: Added JAR file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.commons_commons-pool2-2.12.0.jar at spark://127.0.0.1:62968/jars/org.apache.commons_commons-pool2-2.12.0.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO SparkContext: Added JAR file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.hadoop_hadoop-client-runtime-3.4.1.jar at spark://127.0.0.1:62968/jars/org.apache.hadoop_hadoop-client-runtime-3.4.1.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO SparkContext: Added JAR file:///C:/Users/Nassim/.ivy2.5.2/jars/org.lz4_lz4-java-1.8.0.jar at spark://127.0.0.1:62968/jars/org.lz4_lz4-java-1.8.0.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO SparkContext: Added JAR file:///C:/Users/Nassim/.ivy2.5.2/jars/org.xerial.snappy_snappy-java-1.1.10.7.jar at spark://127.0.0.1:62968/jars/org.xerial.snappy_snappy-java-1.1.10.7.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO SparkContext: Added JAR file:///C:/Users/Nassim/.ivy2.5.2/jars/org.slf4j_slf4j-api-2.0.16.jar at spark://127.0.0.1:62968/jars/org.slf4j_slf4j-api-2.0.16.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO SparkContext: Added JAR file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.hadoop_hadoop-client-api-3.4.1.jar at spark://127.0.0.1:62968/jars/org.apache.hadoop_hadoop-client-api-3.4.1.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO SparkContext: Added file file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.spark_spark-sql-kafka-0-10_2.13-4.0.1.jar at file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.spark_spark-sql-kafka-0-10_2.13-4.0.1.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO Utils: Copying C:\Users\Nassim\.ivy2.5.2\jars\org.apache.spark_spark-sql-kafka-0-10_2.13-4.0.1.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.spark_spark-sql-kafka-0-10_2.13-4.0.1.jar
+25/09/23 14:44:20 INFO SparkContext: Added file file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.13-4.0.1.jar at file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.13-4.0.1.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO Utils: Copying C:\Users\Nassim\.ivy2.5.2\jars\org.apache.spark_spark-token-provider-kafka-0-10_2.13-4.0.1.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.spark_spark-token-provider-kafka-0-10_2.13-4.0.1.jar
+25/09/23 14:44:20 INFO SparkContext: Added file file:///C:/Users/Nassim/.ivy2.5.2/jars/org.scala-lang.modules_scala-parallel-collections_2.13-1.2.0.jar at file:///C:/Users/Nassim/.ivy2.5.2/jars/org.scala-lang.modules_scala-parallel-collections_2.13-1.2.0.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO Utils: Copying C:\Users\Nassim\.ivy2.5.2\jars\org.scala-lang.modules_scala-parallel-collections_2.13-1.2.0.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.scala-lang.modules_scala-parallel-collections_2.13-1.2.0.jar
+25/09/23 14:44:20 INFO SparkContext: Added file file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.kafka_kafka-clients-3.9.1.jar at file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.kafka_kafka-clients-3.9.1.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO Utils: Copying C:\Users\Nassim\.ivy2.5.2\jars\org.apache.kafka_kafka-clients-3.9.1.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.kafka_kafka-clients-3.9.1.jar
+25/09/23 14:44:20 INFO SparkContext: Added file file:///C:/Users/Nassim/.ivy2.5.2/jars/com.google.code.findbugs_jsr305-3.0.0.jar at file:///C:/Users/Nassim/.ivy2.5.2/jars/com.google.code.findbugs_jsr305-3.0.0.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO Utils: Copying C:\Users\Nassim\.ivy2.5.2\jars\com.google.code.findbugs_jsr305-3.0.0.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\com.google.code.findbugs_jsr305-3.0.0.jar
+25/09/23 14:44:20 INFO SparkContext: Added file file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.commons_commons-pool2-2.12.0.jar at file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.commons_commons-pool2-2.12.0.jar with timestamp 1758631458552
+25/09/23 14:44:20 INFO Utils: Copying C:\Users\Nassim\.ivy2.5.2\jars\org.apache.commons_commons-pool2-2.12.0.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.commons_commons-pool2-2.12.0.jar
+25/09/23 14:44:21 INFO SparkContext: Added file file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.hadoop_hadoop-client-runtime-3.4.1.jar at file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.hadoop_hadoop-client-runtime-3.4.1.jar with timestamp 1758631458552
+25/09/23 14:44:21 INFO Utils: Copying C:\Users\Nassim\.ivy2.5.2\jars\org.apache.hadoop_hadoop-client-runtime-3.4.1.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.hadoop_hadoop-client-runtime-3.4.1.jar
+25/09/23 14:44:22 INFO SparkContext: Added file file:///C:/Users/Nassim/.ivy2.5.2/jars/org.lz4_lz4-java-1.8.0.jar at file:///C:/Users/Nassim/.ivy2.5.2/jars/org.lz4_lz4-java-1.8.0.jar with timestamp 1758631458552
+25/09/23 14:44:22 INFO Utils: Copying C:\Users\Nassim\.ivy2.5.2\jars\org.lz4_lz4-java-1.8.0.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.lz4_lz4-java-1.8.0.jar
+25/09/23 14:44:22 INFO SparkContext: Added file file:///C:/Users/Nassim/.ivy2.5.2/jars/org.xerial.snappy_snappy-java-1.1.10.7.jar at file:///C:/Users/Nassim/.ivy2.5.2/jars/org.xerial.snappy_snappy-java-1.1.10.7.jar with timestamp 1758631458552
+25/09/23 14:44:22 INFO Utils: Copying C:\Users\Nassim\.ivy2.5.2\jars\org.xerial.snappy_snappy-java-1.1.10.7.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.xerial.snappy_snappy-java-1.1.10.7.jar
+25/09/23 14:44:22 INFO SparkContext: Added file file:///C:/Users/Nassim/.ivy2.5.2/jars/org.slf4j_slf4j-api-2.0.16.jar at file:///C:/Users/Nassim/.ivy2.5.2/jars/org.slf4j_slf4j-api-2.0.16.jar with timestamp 1758631458552
+25/09/23 14:44:22 INFO Utils: Copying C:\Users\Nassim\.ivy2.5.2\jars\org.slf4j_slf4j-api-2.0.16.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.slf4j_slf4j-api-2.0.16.jar
+25/09/23 14:44:22 INFO SparkContext: Added file file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.hadoop_hadoop-client-api-3.4.1.jar at file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.hadoop_hadoop-client-api-3.4.1.jar with timestamp 1758631458552
+25/09/23 14:44:22 INFO Utils: Copying C:\Users\Nassim\.ivy2.5.2\jars\org.apache.hadoop_hadoop-client-api-3.4.1.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.hadoop_hadoop-client-api-3.4.1.jar
+25/09/23 14:44:22 INFO SecurityManager: Changing view acls to: Nassim
+25/09/23 14:44:22 INFO SecurityManager: Changing modify acls to: Nassim
+25/09/23 14:44:22 INFO SecurityManager: Changing view acls groups to: Nassim
+25/09/23 14:44:22 INFO SecurityManager: Changing modify acls groups to: Nassim
+25/09/23 14:44:22 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: Nassim groups with view permissions: EMPTY; users with modify permissions: Nassim; groups with modify permissions: EMPTY; RPC SSL disabled
+25/09/23 14:44:22 INFO Executor: Starting executor ID driver on host 10.74.1.142
+25/09/23 14:44:22 INFO Executor: OS info Windows 11, 10.0, amd64
+25/09/23 14:44:22 INFO Executor: Java version 17.0.16
+25/09/23 14:44:22 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+25/09/23 14:44:22 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@3221b1b6 for default.
+25/09/23 14:44:22 INFO Executor: Fetching file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.spark_spark-sql-kafka-0-10_2.13-4.0.1.jar with timestamp 1758631458552
+25/09/23 14:44:22 INFO Utils: C:\Users\Nassim\.ivy2.5.2\jars\org.apache.spark_spark-sql-kafka-0-10_2.13-4.0.1.jar has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.spark_spark-sql-kafka-0-10_2.13-4.0.1.jar
+25/09/23 14:44:22 INFO Executor: Fetching file:///C:/Users/Nassim/.ivy2.5.2/jars/org.scala-lang.modules_scala-parallel-collections_2.13-1.2.0.jar with timestamp 1758631458552
+25/09/23 14:44:22 INFO Utils: C:\Users\Nassim\.ivy2.5.2\jars\org.scala-lang.modules_scala-parallel-collections_2.13-1.2.0.jar has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.scala-lang.modules_scala-parallel-collections_2.13-1.2.0.jar
+25/09/23 14:44:22 INFO Executor: Fetching file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.kafka_kafka-clients-3.9.1.jar with timestamp 1758631458552
+25/09/23 14:44:22 INFO Utils: C:\Users\Nassim\.ivy2.5.2\jars\org.apache.kafka_kafka-clients-3.9.1.jar has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.kafka_kafka-clients-3.9.1.jar
+25/09/23 14:44:23 INFO Executor: Fetching file:///C:/Users/Nassim/.ivy2.5.2/jars/org.slf4j_slf4j-api-2.0.16.jar with timestamp 1758631458552
+25/09/23 14:44:23 INFO Utils: C:\Users\Nassim\.ivy2.5.2\jars\org.slf4j_slf4j-api-2.0.16.jar has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.slf4j_slf4j-api-2.0.16.jar
+25/09/23 14:44:23 INFO Executor: Fetching file:///C:/Users/Nassim/.ivy2.5.2/jars/com.google.code.findbugs_jsr305-3.0.0.jar with timestamp 1758631458552
+25/09/23 14:44:23 INFO Utils: C:\Users\Nassim\.ivy2.5.2\jars\com.google.code.findbugs_jsr305-3.0.0.jar has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\com.google.code.findbugs_jsr305-3.0.0.jar
+25/09/23 14:44:23 INFO Executor: Fetching file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.commons_commons-pool2-2.12.0.jar with timestamp 1758631458552
+25/09/23 14:44:23 INFO Utils: C:\Users\Nassim\.ivy2.5.2\jars\org.apache.commons_commons-pool2-2.12.0.jar has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.commons_commons-pool2-2.12.0.jar
+25/09/23 14:44:23 INFO Executor: Fetching file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.hadoop_hadoop-client-api-3.4.1.jar with timestamp 1758631458552
+25/09/23 14:44:23 INFO Utils: C:\Users\Nassim\.ivy2.5.2\jars\org.apache.hadoop_hadoop-client-api-3.4.1.jar has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.hadoop_hadoop-client-api-3.4.1.jar
+25/09/23 14:44:23 INFO Executor: Fetching file:///C:/Users/Nassim/.ivy2.5.2/jars/org.lz4_lz4-java-1.8.0.jar with timestamp 1758631458552
+25/09/23 14:44:23 INFO Utils: C:\Users\Nassim\.ivy2.5.2\jars\org.lz4_lz4-java-1.8.0.jar has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.lz4_lz4-java-1.8.0.jar
+25/09/23 14:44:23 INFO Executor: Fetching file:///C:/Users/Nassim/.ivy2.5.2/jars/org.xerial.snappy_snappy-java-1.1.10.7.jar with timestamp 1758631458552
+25/09/23 14:44:23 INFO Utils: C:\Users\Nassim\.ivy2.5.2\jars\org.xerial.snappy_snappy-java-1.1.10.7.jar has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.xerial.snappy_snappy-java-1.1.10.7.jar
+25/09/23 14:44:23 INFO Executor: Fetching file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.13-4.0.1.jar with timestamp 1758631458552
+25/09/23 14:44:23 INFO Utils: C:\Users\Nassim\.ivy2.5.2\jars\org.apache.spark_spark-token-provider-kafka-0-10_2.13-4.0.1.jar has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.spark_spark-token-provider-kafka-0-10_2.13-4.0.1.jar
+25/09/23 14:44:23 INFO Executor: Fetching file:///C:/Users/Nassim/.ivy2.5.2/jars/org.apache.hadoop_hadoop-client-runtime-3.4.1.jar with timestamp 1758631458552
+25/09/23 14:44:23 INFO Utils: C:\Users\Nassim\.ivy2.5.2\jars\org.apache.hadoop_hadoop-client-runtime-3.4.1.jar has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.hadoop_hadoop-client-runtime-3.4.1.jar
+25/09/23 14:44:23 INFO Executor: Fetching spark://127.0.0.1:62968/jars/org.apache.hadoop_hadoop-client-api-3.4.1.jar with timestamp 1758631458552
+25/09/23 14:44:23 INFO TransportClientFactory: Successfully created connection to /127.0.0.1:62968 after 86 ms (0 ms spent in bootstraps)
+25/09/23 14:44:23 INFO Utils: Fetching spark://127.0.0.1:62968/jars/org.apache.hadoop_hadoop-client-api-3.4.1.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp11509964558917467897.tmp
+25/09/23 14:44:24 INFO Utils: C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp11509964558917467897.tmp has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.hadoop_hadoop-client-api-3.4.1.jar
+25/09/23 14:44:24 INFO Executor: Adding file:/C:/Users/Nassim/AppData/Local/Temp/spark-e77c7368-ff73-486f-bbd0-decb92d64c77/userFiles-675536ce-4239-4015-8100-f84d421d0b6b/org.apache.hadoop_hadoop-client-api-3.4.1.jar to class loader default
+25/09/23 14:44:24 INFO Executor: Fetching spark://127.0.0.1:62968/jars/org.apache.commons_commons-pool2-2.12.0.jar with timestamp 1758631458552
+25/09/23 14:44:24 INFO Utils: Fetching spark://127.0.0.1:62968/jars/org.apache.commons_commons-pool2-2.12.0.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp9371551657726951815.tmp
+25/09/23 14:44:24 INFO Utils: C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp9371551657726951815.tmp has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.commons_commons-pool2-2.12.0.jar
+25/09/23 14:44:24 INFO Executor: Adding file:/C:/Users/Nassim/AppData/Local/Temp/spark-e77c7368-ff73-486f-bbd0-decb92d64c77/userFiles-675536ce-4239-4015-8100-f84d421d0b6b/org.apache.commons_commons-pool2-2.12.0.jar to class loader default
+25/09/23 14:44:24 INFO Executor: Fetching spark://127.0.0.1:62968/jars/org.scala-lang.modules_scala-parallel-collections_2.13-1.2.0.jar with timestamp 1758631458552
+25/09/23 14:44:24 INFO Utils: Fetching spark://127.0.0.1:62968/jars/org.scala-lang.modules_scala-parallel-collections_2.13-1.2.0.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp17957259665951539024.tmp
+25/09/23 14:44:24 INFO Utils: C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp17957259665951539024.tmp has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.scala-lang.modules_scala-parallel-collections_2.13-1.2.0.jar
+25/09/23 14:44:24 INFO Executor: Adding file:/C:/Users/Nassim/AppData/Local/Temp/spark-e77c7368-ff73-486f-bbd0-decb92d64c77/userFiles-675536ce-4239-4015-8100-f84d421d0b6b/org.scala-lang.modules_scala-parallel-collections_2.13-1.2.0.jar to class loader default
+25/09/23 14:44:24 INFO Executor: Fetching spark://127.0.0.1:62968/jars/org.slf4j_slf4j-api-2.0.16.jar with timestamp 1758631458552
+25/09/23 14:44:24 INFO Utils: Fetching spark://127.0.0.1:62968/jars/org.slf4j_slf4j-api-2.0.16.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp17400085387908578938.tmp
+25/09/23 14:44:24 INFO Utils: C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp17400085387908578938.tmp has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.slf4j_slf4j-api-2.0.16.jar
+25/09/23 14:44:24 INFO Executor: Adding file:/C:/Users/Nassim/AppData/Local/Temp/spark-e77c7368-ff73-486f-bbd0-decb92d64c77/userFiles-675536ce-4239-4015-8100-f84d421d0b6b/org.slf4j_slf4j-api-2.0.16.jar to class loader default
+25/09/23 14:44:24 INFO Executor: Fetching spark://127.0.0.1:62968/jars/org.lz4_lz4-java-1.8.0.jar with timestamp 1758631458552
+25/09/23 14:44:24 INFO Utils: Fetching spark://127.0.0.1:62968/jars/org.lz4_lz4-java-1.8.0.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp11015102964845807995.tmp
+25/09/23 14:44:24 INFO Utils: C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp11015102964845807995.tmp has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.lz4_lz4-java-1.8.0.jar
+25/09/23 14:44:24 INFO Executor: Adding file:/C:/Users/Nassim/AppData/Local/Temp/spark-e77c7368-ff73-486f-bbd0-decb92d64c77/userFiles-675536ce-4239-4015-8100-f84d421d0b6b/org.lz4_lz4-java-1.8.0.jar to class loader default
+25/09/23 14:44:24 INFO Executor: Fetching spark://127.0.0.1:62968/jars/org.apache.kafka_kafka-clients-3.9.1.jar with timestamp 1758631458552
+25/09/23 14:44:24 INFO Utils: Fetching spark://127.0.0.1:62968/jars/org.apache.kafka_kafka-clients-3.9.1.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp11548110984203989909.tmp
+25/09/23 14:44:24 INFO Utils: C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp11548110984203989909.tmp has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.kafka_kafka-clients-3.9.1.jar
+25/09/23 14:44:24 INFO Executor: Adding file:/C:/Users/Nassim/AppData/Local/Temp/spark-e77c7368-ff73-486f-bbd0-decb92d64c77/userFiles-675536ce-4239-4015-8100-f84d421d0b6b/org.apache.kafka_kafka-clients-3.9.1.jar to class loader default
+25/09/23 14:44:24 INFO Executor: Fetching spark://127.0.0.1:62968/jars/org.xerial.snappy_snappy-java-1.1.10.7.jar with timestamp 1758631458552
+25/09/23 14:44:24 INFO Utils: Fetching spark://127.0.0.1:62968/jars/org.xerial.snappy_snappy-java-1.1.10.7.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp16384077251914446380.tmp
+25/09/23 14:44:24 INFO Utils: C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp16384077251914446380.tmp has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.xerial.snappy_snappy-java-1.1.10.7.jar
+25/09/23 14:44:24 INFO Executor: Adding file:/C:/Users/Nassim/AppData/Local/Temp/spark-e77c7368-ff73-486f-bbd0-decb92d64c77/userFiles-675536ce-4239-4015-8100-f84d421d0b6b/org.xerial.snappy_snappy-java-1.1.10.7.jar to class loader default
+25/09/23 14:44:24 INFO Executor: Fetching spark://127.0.0.1:62968/jars/org.apache.hadoop_hadoop-client-runtime-3.4.1.jar with timestamp 1758631458552
+25/09/23 14:44:24 INFO Utils: Fetching spark://127.0.0.1:62968/jars/org.apache.hadoop_hadoop-client-runtime-3.4.1.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp15353359594679917132.tmp
+25/09/23 14:44:24 INFO Utils: C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp15353359594679917132.tmp has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.hadoop_hadoop-client-runtime-3.4.1.jar
+25/09/23 14:44:25 INFO Executor: Adding file:/C:/Users/Nassim/AppData/Local/Temp/spark-e77c7368-ff73-486f-bbd0-decb92d64c77/userFiles-675536ce-4239-4015-8100-f84d421d0b6b/org.apache.hadoop_hadoop-client-runtime-3.4.1.jar to class loader default
+25/09/23 14:44:25 INFO Executor: Fetching spark://127.0.0.1:62968/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.13-4.0.1.jar with timestamp 1758631458552
+25/09/23 14:44:25 INFO Utils: Fetching spark://127.0.0.1:62968/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.13-4.0.1.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp71937010560531874.tmp
+25/09/23 14:44:25 INFO Utils: C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp71937010560531874.tmp has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.spark_spark-token-provider-kafka-0-10_2.13-4.0.1.jar
+25/09/23 14:44:25 INFO Executor: Adding file:/C:/Users/Nassim/AppData/Local/Temp/spark-e77c7368-ff73-486f-bbd0-decb92d64c77/userFiles-675536ce-4239-4015-8100-f84d421d0b6b/org.apache.spark_spark-token-provider-kafka-0-10_2.13-4.0.1.jar to class loader default
+25/09/23 14:44:25 INFO Executor: Fetching spark://127.0.0.1:62968/jars/com.google.code.findbugs_jsr305-3.0.0.jar with timestamp 1758631458552
+25/09/23 14:44:25 INFO Utils: Fetching spark://127.0.0.1:62968/jars/com.google.code.findbugs_jsr305-3.0.0.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp12400416929757703205.tmp
+25/09/23 14:44:25 INFO Utils: C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp12400416929757703205.tmp has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\com.google.code.findbugs_jsr305-3.0.0.jar
+25/09/23 14:44:25 INFO Executor: Adding file:/C:/Users/Nassim/AppData/Local/Temp/spark-e77c7368-ff73-486f-bbd0-decb92d64c77/userFiles-675536ce-4239-4015-8100-f84d421d0b6b/com.google.code.findbugs_jsr305-3.0.0.jar to class loader default
+25/09/23 14:44:25 INFO Executor: Fetching spark://127.0.0.1:62968/jars/org.apache.spark_spark-sql-kafka-0-10_2.13-4.0.1.jar with timestamp 1758631458552
+25/09/23 14:44:25 INFO Utils: Fetching spark://127.0.0.1:62968/jars/org.apache.spark_spark-sql-kafka-0-10_2.13-4.0.1.jar to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp14663305785227186365.tmp
+25/09/23 14:44:25 INFO Utils: C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\fetchFileTemp14663305785227186365.tmp has been previously copied to C:\Users\Nassim\AppData\Local\Temp\spark-e77c7368-ff73-486f-bbd0-decb92d64c77\userFiles-675536ce-4239-4015-8100-f84d421d0b6b\org.apache.spark_spark-sql-kafka-0-10_2.13-4.0.1.jar
+25/09/23 14:44:25 INFO Executor: Adding file:/C:/Users/Nassim/AppData/Local/Temp/spark-e77c7368-ff73-486f-bbd0-decb92d64c77/userFiles-675536ce-4239-4015-8100-f84d421d0b6b/org.apache.spark_spark-sql-kafka-0-10_2.13-4.0.1.jar to class loader default
+25/09/23 14:44:25 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 62970.
+25/09/23 14:44:25 INFO NettyBlockTransferService: Server created on 127.0.0.1:62970
+25/09/23 14:44:25 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+25/09/23 14:44:25 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 127.0.0.1, 62970, None)
+25/09/23 14:44:25 INFO BlockManagerMasterEndpoint: Registering block manager 127.0.0.1:62970 with 434.4 MiB RAM, BlockManagerId(driver, 127.0.0.1, 62970, None)
+25/09/23 14:44:25 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 127.0.0.1, 62970, None)
+25/09/23 14:44:25 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 127.0.0.1, 62970, None)
+25/09/23 14:44:33 WARN ResolveWriteToStream: Temporary checkpoint location created which is deleted normally when the query didn't fail: C:\Users\Nassim\AppData\Local\Temp\temporary-8b922df7-398e-4ce4-925b-fa3c98168af5. If it's required to delete it under any circumstances, please set spark.sql.streaming.forceDeleteTempCheckpointLocation to true. Important to know deleting temp checkpoint folder is best effort.
+25/09/23 14:44:33 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+25/09/23 14:44:34 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+25/09/23 14:44:37 WARN SparkStringUtils: Truncated the string representation of a plan since it was too large. This behavior can be adjusted by setting 'spark.sql.debug.maxToStringFields'.
+^C^C

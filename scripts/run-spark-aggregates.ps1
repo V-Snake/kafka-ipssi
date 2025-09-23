@@ -39,4 +39,4 @@ spark-submit.cmd `
   --checkpoint $Checkpoint `
   --window "$Window" `
   --slide "$Slide" `
-  @consoleFlag
+  $consoleFlag
