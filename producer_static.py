@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Ex01 — Producer statique
+Ex06 — Producer statique (ville + pays)
 Envoie 10 messages JSON sur un topic Kafka (par défaut: weather_stream).
-Usage:
-    python producer_static.py --topic weather_stream
-Vars env supportées:
-    KAFKA_BOOTSTRAP_SERVERS (default: localhost:9092)
+Arguments:
+  --city-name "Paris" --country "FR"
+Compat: si non fournis, on met des valeurs par défaut.
 """
+
 import os, json, time, argparse, logging
 from datetime import datetime, timezone
 from kafka import KafkaProducer
@@ -25,6 +25,8 @@ def build_producer(servers: str) -> KafkaProducer:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--topic", default="weather_stream")
+    parser.add_argument("--city-name", default=os.getenv("CITY_NAME", "Paris"))
+    parser.add_argument("--country", default=os.getenv("COUNTRY", "FR"))
     args = parser.parse_args()
 
     servers = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
@@ -36,16 +38,21 @@ def main():
         logging.error("Kafka non joignable sur %s. Lance d’abord: docker compose up -d", servers)
         raise SystemExit(1)
 
-    logging.info("Envoi de 10 messages sur topic '%s' -> %s", args.topic, servers)
+    logging.info("Envoi de 10 messages sur topic '%s' -> %s (city=%s, country=%s)",
+                 args.topic, servers, args.city_name, args.country)
+
     for i in range(10):
         payload = {
             "msg": "Hello Kafka",
             "seq": i + 1,
-            "ts": datetime.now(timezone.utc).isoformat()
+            "ts": datetime.now(timezone.utc).isoformat(),
+            # Ajouts Ex06
+            "city_name": args.city_name,
+            "country": None,              # nom complet inconnu ici
+            "country_code": args.country,
+            "version": 2
         }
-        future = producer.send(args.topic, payload)
-        # forcer l'exception ici si pb d’acks
-        future.get(timeout=10)
+        producer.send(args.topic, payload).get(timeout=10)
         logging.info("Envoyé: %s", payload)
         time.sleep(0.1)
 

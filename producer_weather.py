@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Ex03 — Producer météo "live" (Open-Meteo, pas de clé API)
-- Accepte city sous forme: "Paris", "Paris,FR", ou "48.8566,2.3522"
-- Géocode via Open-Meteo Geocoding (fallbacks robustes)
+Ex06 — Producer météo "live" (ville + pays en arguments)
+- Accepte:
+    * --city-name "Paris" et --country "FR"
+    * ou --city "Paris,FR" (compat)
+    * ou coordonnées "48.8566,2.3522" (compat)
+- Géocode via Open-Meteo Geocoding
 - Récupère current_weather
-- Envoie N messages JSON dans Kafka (topic par défaut: weather_stream)
+- Envoie des messages JSON dans Kafka (topic par défaut: weather_stream)
+- Chaque message inclut: city_name, country_code, country (+ meta admin1/admin2)
 
 Exemples:
-  python producer_weather.py --city "Paris,FR" --loops 5 --interval 1
+  python producer_weather.py --city-name "Paris" --country "FR" --loops 5 --interval 1
+  python producer_weather.py --city "Paris,FR" --loops 3
   python producer_weather.py --city "48.8566,2.3522" --loops 3
 """
 
@@ -26,7 +31,7 @@ WX_URL  = "https://api.open-meteo.com/v1/forecast"
 _COORDS_RE = re.compile(r"^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$")
 
 def parse_coords(s: str) -> Optional[Tuple[float, float]]:
-    m = _COORDS_RE.match(s)
+    m = _COORDS_RE.match(s or "")
     if not m:
         return None
     return float(m.group(1)), float(m.group(2))
@@ -37,50 +42,76 @@ def om_geocode(session: requests.Session, name: str, count: int = 5) -> List[Dic
     data = r.json()
     return data.get("results") or []
 
-def geocode_city(session: requests.Session, city: str) -> Tuple[float, float, str]:
+def geocode_city(
+    session: requests.Session,
+    query: str,
+    prefer_country: Optional[str] = None
+) -> Tuple[float, float, Dict[str, Any]]:
     """
-    Tente successivement:
-    - Si city = "lat,lon" -> retour direct
-    - Requête Open-Meteo avec city tel quel
-    - Si "Ville,CC" -> retry avec "Ville" et préférer result.country_code == CC
-    - En dernier recours: enlever tout après la première virgule
+    Renvoie (lat, lon, meta) avec meta = {
+        name, country, country_code, admin1, admin2, display
+    }
+
+    Stratégie:
+      - si query = "lat,lon" -> retourne direct
+      - sinon geocode; si prefer_country fourni (ex "FR"), sélectionne le meilleur match avec ce code
+      - sinon prend le premier résultat
     """
-    # 1) Coordonnées directes
-    coords = parse_coords(city)
+    coords = parse_coords(query)
     if coords:
         lat, lon = coords
-        return lat, lon, f"coords({lat:.4f},{lon:.4f})"
+        meta = {
+            "name": f"coords({lat:.4f},{lon:.4f})",
+            "country": None,
+            "country_code": None,
+            "admin1": None,
+            "admin2": None,
+        }
+        meta["display"] = meta["name"]
+        return lat, lon, meta
 
-    # 2) Tentative directe
-    results = om_geocode(session, city, count=5)
-    if results:
-        r = results[0]
-        return float(r["latitude"]), float(r["longitude"]), f'{r.get("name")}, {r.get("country_code")}'
+    results = om_geocode(session, query, count=8)
+    if not results:
+        # Si "Ville,CC" -> retry sur "Ville" avec préférence CC
+        parts = [p.strip() for p in (query or "").split(",") if p.strip()]
+        if len(parts) >= 2:
+            base, cc = parts[0], parts[-1]
+            results = om_geocode(session, base, count=8)
+            prefer_country = prefer_country or (cc.upper() if len(cc) in (2, 3) else None)
 
-    # 3) Si "Ville,CC" -> préférer le pays
-    parts = [p.strip() for p in city.split(",") if p.strip()]
-    if len(parts) >= 2:
-        base, cc = parts[0], parts[-1].upper()
-        results = om_geocode(session, base, count=5)
-        if results:
-            # Cherche le code pays exact si cc semble être un code sur 2 lettres
-            if len(cc) in (2, 3):
-                for r in results:
-                    if (r.get("country_code") or "").upper() == cc:
-                        return float(r["latitude"]), float(r["longitude"]), f'{r.get("name")}, {r.get("country_code")}'
-            # sinon, prends le premier
-            r = results[0]
-            return float(r["latitude"]), float(r["longitude"]), f'{r.get("name")}, {r.get("country_code")}'
+    if not results:
+        raise ValueError(f"Ville introuvable: {query}")
 
-    # 4) Dernier essai: garder avant la première virgule
-    if "," in city:
-        base = city.split(",")[0].strip()
-        results = om_geocode(session, base, count=5)
-        if results:
-            r = results[0]
-            return float(r["latitude"]), float(r["longitude"]), f'{r.get("name")}, {r.get("country_code")}'
+    pick = None
+    if prefer_country:
+        pc = prefer_country.upper()
+        for r in results:
+            if (r.get("country_code") or "").upper() == pc:
+                pick = r
+                break
+    if pick is None:
+        pick = results[0]
 
-    raise ValueError(f"Ville introuvable: {city}")
+    lat = float(pick["latitude"])
+    lon = float(pick["longitude"])
+    meta = {
+        "name": pick.get("name"),
+        "country": pick.get("country"),
+        "country_code": (pick.get("country_code") or "").upper() or None,
+        "admin1": pick.get("admin1"),
+        "admin2": pick.get("admin2"),
+    }
+    meta["display"] = f'{meta["name"]}, {meta["country_code"]}' if meta["country_code"] else meta["name"]
+    return lat, lon, meta
+
+def build_producer(servers: str) -> KafkaProducer:
+    return KafkaProducer(
+        bootstrap_servers=servers.split(","),
+        acks="all",
+        linger_ms=10,
+        retries=3,
+        value_serializer=lambda v: json.dumps(v, separators=(",", ":")).encode("utf-8"),
+    )
 
 def fetch_current_weather(session: requests.Session, lat: float, lon: float) -> Dict[str, Any]:
     r = session.get(WX_URL, params={"latitude": lat, "longitude": lon, "current_weather": "true"}, timeout=10)
@@ -101,18 +132,13 @@ def fetch_current_weather(session: requests.Session, lat: float, lon: float) -> 
         "source": "open-meteo"
     }
 
-def build_producer(servers: str) -> KafkaProducer:
-    return KafkaProducer(
-        bootstrap_servers=servers.split(","),
-        acks="all",
-        linger_ms=10,
-        retries=3,
-        value_serializer=lambda v: json.dumps(v, separators=(",", ":")).encode("utf-8"),
-    )
-
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--city", default=os.getenv("CITY", "Paris,FR"))
+    # Nouveaux arguments séparés
+    parser.add_argument("--city-name", help='Nom de la ville (ex: "Paris")')
+    parser.add_argument("--country", help='Code pays (ex: "FR")')
+    # Compat: ancien --city "Paris,FR" ou "lat,lon"
+    parser.add_argument("--city", help='Compat: "Paris,FR" ou "48.8566,2.3522"')
     parser.add_argument("--topic", default=os.getenv("TOPIC", "weather_stream"))
     parser.add_argument("--loops", type=int, default=int(os.getenv("LOOPS", "5")))
     parser.add_argument("--interval", type=float, default=float(os.getenv("INTERVAL", "1")))
@@ -120,14 +146,31 @@ def main():
 
     servers = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-    logging.info("Producer météo -> city=%s topic=%s servers=%s", args.city, args.topic, servers)
+
+    # Construire la requête de géocodage à partir des nouveaux args
+    if args.city_name:
+        query = args.city_name if not args.country else f"{args.city_name},{args.country}"
+        prefer_country = args.country
+    elif args.city:
+        query = args.city
+        # Si --city a la forme "Ville,CC", on peut déduire une préférence
+        parts = [p.strip() for p in args.city.split(",") if p.strip()]
+        prefer_country = parts[-1] if len(parts) >= 2 and len(parts[-1]) in (2, 3) else None
+    else:
+        # Valeur par défaut identique à avant
+        query = os.getenv("CITY", "Paris,FR")
+        prefer_country = None
+
+    logging.info("Producer météo -> query=%s topic=%s servers=%s", query, args.topic, servers)
 
     session = requests.Session()
     try:
-        lat, lon, display = geocode_city(session, args.city)
-        logging.info("Géocodage OK: %s -> lat=%.4f lon=%.4f", display, lat, lon)
+        lat, lon, meta = geocode_city(session, query, prefer_country=prefer_country)
+        display = meta["display"]
+        logging.info("Géocodage OK: %s -> lat=%.4f lon=%.4f (country=%s)",
+                     display, lat, lon, meta.get("country_code"))
     except Exception as e:
-        logging.error("Échec géocodage (%s): %s", args.city, e)
+        logging.error("Échec géocodage (%s): %s", query, e)
         raise SystemExit(1)
 
     try:
@@ -141,15 +184,30 @@ def main():
         try:
             wx = fetch_current_weather(session, lat, lon)
             payload = {
+                # Champs *séparés* pour partitionnements et agrégats région
+                "city_name": meta.get("name"),
+                "country": meta.get("country"),                 # ex: "France"
+                "country_code": meta.get("country_code"),       # ex: "FR"
+                "admin1": meta.get("admin1"),                   # région (si dispo)
+                "admin2": meta.get("admin2"),                   # département (si dispo)
+
+                # Compat / lisible
                 "city": display,
                 "lat": lat,
                 "lon": lon,
+
+                # Mesure
                 "current": wx,
-                "ts_sent": datetime.now(timezone.utc).isoformat()
+
+                # Métadonnées
+                "ts_sent": datetime.now(timezone.utc).isoformat(),
+                "version": 2
             }
             producer.send(args.topic, payload).get(timeout=10)
             sent += 1
-            logging.info("Envoyé %d/%d: %s°C, wind %.1f", sent, args.loops, wx.get("temperature"), wx.get("windspeed"))
+            logging.info("Envoyé %d/%d: %s°C, wind %.1f (%s, %s)",
+                         sent, args.loops, wx.get("temperature"), wx.get("windspeed"),
+                         payload["city_name"], payload["country_code"])
         except Exception as e:
             logging.warning("Erreur fetch/envoi (it=%d): %s", i + 1, e)
         time.sleep(args.interval)
